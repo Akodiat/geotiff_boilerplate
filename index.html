@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Georaster boilerplate</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        #map {
+            top: 0;
+        }
+        #map, #overlay {
+            bottom: 0;
+            left: 0;
+            position: absolute;
+            right: 0;
+        }
+        #map {
+            z-index: 1;
+        }
+        #overlay {
+            background: rgba(252, 252, 252, 0.801);
+            padding: 2em;
+            z-index: 2;
+        }
+        #guiContainer {
+            position: absolute;
+            right: 0;
+            top: 0;
+            padding: 1em;
+            z-index: 3;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <div id="guiContainer"></div>
+    <div id="overlay">
+        <h1>Please load a GeoTIFF file</h1> <input type="file" id="geotiff-file" multiple="multiple">
+    </div>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/georaster"></script>
+    <script src="https://unpkg.com/proj4"></script>
+    <script src="https://unpkg.com/chroma-js"></script>
+    <script src="https://unpkg.com/georaster-layer-for-leaflet"></script>
+    <script src="https://unpkg.com/dat.gui@0.7.9/build/dat.gui.min.js"></script>
+    <script src="main.js"></script>
+</body>
+
+</html>
