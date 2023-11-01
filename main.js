@@ -2,12 +2,14 @@
 let gui = new dat.GUI({autoPlace: false});
 document.getElementById("guiContainer").appendChild(gui.domElement);
 
-let dataRange = {
+let settings = {
     min: 0,
-    max: 1
+    max: 1,
+    opacity: 0.7
 }
-let minController = gui.add(dataRange, "min", dataRange.min, dataRange.max);
-let maxController = gui.add(dataRange, "max", dataRange.min, dataRange.max);
+let minController = gui.add(settings, "min", settings.min, settings.max);
+let maxController = gui.add(settings, "max", settings.min, settings.max);
+let opacityController = gui.add(settings, "opacity", 0, 1);
 
 // initalize leaflet map
 let map = L.map('map').setView([0, 0], 5);
@@ -44,13 +46,13 @@ document.getElementById("geotiff-file").addEventListener("change", function(even
 
                 // TODO, think this through
                 if (georaster.numberOfRasters === 1) {
-                    dataRange.min = Math.min(dataRange.min, georaster.mins[0]);
-                    dataRange.max = Math.max(dataRange.max, georaster.maxs[0]);
+                    settings.min = Math.min(settings.min, Math.max(0,georaster.mins[0]));
+                    settings.max = Math.max(settings.max, georaster.maxs[0]);
 
-                    minController.min(Math.min(dataRange.min, georaster.mins[0]));
-                    maxController.max(Math.max(dataRange.max, georaster.maxs[0]));
-                    maxController.min(Math.min(dataRange.min, georaster.mins[0]));
-                    minController.max(Math.max(dataRange.max, georaster.maxs[0]));
+                    minController.min(Math.min(settings.min, georaster.mins[0]));
+                    maxController.max(Math.max(settings.max, georaster.maxs[0]));
+                    maxController.min(Math.min(settings.min, georaster.mins[0]));
+                    minController.max(Math.max(settings.max, georaster.maxs[0]));
                     minController.updateDisplay();
                     maxController.updateDisplay();
                 }
@@ -59,11 +61,11 @@ document.getElementById("geotiff-file").addEventListener("change", function(even
 
                 let layer = new GeoRasterLayer({
                     georaster: georaster,
-                    opacity: 0.7,
+                    opacity: settings.opacity,
                     pixelValuesToColorFn: georaster.numberOfRasters === 1 ? pixelValues => {
                         let pixelValue = pixelValues[0]; // assume there's just one band in this raster
                         // scale to 0 - 1 used by chroma
-                        let scaledPixelValue = (pixelValue - dataRange.min) / (dataRange.max - dataRange.min);
+                        let scaledPixelValue = (pixelValue - settings.min) / (settings.max - settings.min);
                         let color = scale(scaledPixelValue).hex();
                         return color;
                     } : null,
@@ -80,6 +82,7 @@ document.getElementById("geotiff-file").addEventListener("change", function(even
 
                 maxController.onChange(() => layers.forEach(l=>l.redraw()));
                 minController.onChange(() => layers.forEach(l=>l.redraw()));
+                opacityController.onChange(() => layers.forEach(l=>l.setOpacity(settings.opacity)));
             });
         };
     }
